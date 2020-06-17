@@ -60,6 +60,11 @@ Example:
 ./sweep_log_streams.py /aws/lambda/my-func
 ```
 
+This will be able to delete the log group itself
+```bash
+./sweep_log_streams.py --del-log-group [log-stream-prefix]
+```
+
 ## Contributing
 
 Feedback, issues, forks, and pull requests welcome! Thanks.
