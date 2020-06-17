@@ -87,6 +87,17 @@ def delete_old_streams(log_group, dry_run=False):
             print_log_group(log_group, "Checked stream, keeping: " + stream['logStreamName'])
 
 
+def delete_log_group(log_group, dry_run=False):
+    if dry_run:
+        print_log_group(log_group, "Would delete log group: " + log_group['logGroupName'] + " (--dry-run set)")
+    else:
+        print_log_group(log_group, "Deleting log group: " + log_group['logGroupName'])
+        client.delete_log_group(
+            logGroupName=log_group['logGroupName']
+        )
+        print_log_group(log_group, "Deleted log group: " + log_group['logGroupName'])
+
+
 def get_arg_parser():
     parser = argparse.ArgumentParser(description="Cleans up old and empty log streams from log groups matching a "
                                                  "provided pattern")
@@ -100,15 +111,24 @@ def get_arg_parser():
     parser.add_argument("prefix",
                         help="The log group prefix to filter for. Example: '/aws/lambda/app-staging-'"
                         )
+
+    parser.add_argument("--del-log-group",
+                        dest="del_log_group",
+                        action="store_true",
+                        help="Delete the log group as well as its streams."
+                        )
+
     return parser
 
 
-def main(prefix, dry_run=False):
+def main(prefix, dry_run=False, del_log_group=False):
     for log_group in get_log_groups(prefix):
         delete_old_streams(log_group, dry_run)
+        if del_log_group:
+            delete_log_group(log_group, dry_run)
     print("Done")
 
 
 if __name__ == "__main__":
     args = get_arg_parser().parse_args()
-    main(args.prefix, args.dry_run)
+    main(args.prefix, args.dry_run, args.del_log_group)
