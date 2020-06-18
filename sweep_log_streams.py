@@ -123,9 +123,9 @@ def get_arg_parser():
 
 def main(prefix, dry_run=False, del_log_group=False):
     for log_group in get_log_groups(prefix):
-        delete_old_streams(log_group, dry_run)
         if del_log_group:
             delete_log_group(log_group, dry_run)
+        delete_old_streams(log_group, dry_run)
     print("Done")
 
 
